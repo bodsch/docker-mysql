@@ -14,7 +14,7 @@ docker run \
   --interactive \
   --tty \
   --detach \
-  --publish=3306:3306 \
+  --publish=33060:3306 \
   --volume=${DATA_DIR}/${TYPE}:/app \
   --name ${CONTAINER_NAME} \
   ${TAG_NAME}
