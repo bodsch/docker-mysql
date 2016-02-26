@@ -15,6 +15,7 @@ docker run \
   --tty \
   --detach \
   --publish=33060:3306 \
+  --env MYSQL_ROOT_PASSWORD=foo.bar.Z \
   --volume=${DATA_DIR}/${TYPE}:/app \
   --name ${CONTAINER_NAME} \
   ${TAG_NAME}
