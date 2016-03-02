@@ -1,8 +1,8 @@
-FROM alpine:latest
+FROM alpine:3.3
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
-LABEL version "1.0.2"
+LABEL version "1.1.0"
 
 EXPOSE 3306
 
@@ -11,16 +11,17 @@ EXPOSE 3306
 WORKDIR /app
 VOLUME  /app
 
-ADD rootfs /
-
 RUN \
-  apk add --update \
-  supervisor \
-  mysql \
-  mysql-client \
-  pwgen && \
-  rm -f /var/cache/apk/* && \
-  chmod u+x /opt/supervisor/*_supervisor
+  apk update && \
+  apk upgrade && \
+  apk add \
+    supervisor \
+    mysql \
+    mysql-client \
+    pwgen && \
+  rm -rf /tmp/* /var/cache/apk/*
+
+ADD rootfs/ /
 
 CMD [ "/opt/startup.sh" ]
 

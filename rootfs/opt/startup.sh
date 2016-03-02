@@ -57,6 +57,11 @@ fi
 
 echo -e "\n Starting Supervisor.\n  You can safely CTRL-C and the container will continue to run with or without the -d (daemon) option\n\n"
 
-/usr/bin/supervisord -c /etc/supervisor/conf.d/mysql.conf >> /dev/null
+if [ -f /etc/supervisor.d/mysql.ini ]
+then
+  /usr/bin/supervisord >> /dev/null
+else
+  exec /bin/bash
+fi
 
 # EOF
