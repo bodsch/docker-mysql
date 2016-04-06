@@ -1,9 +1,9 @@
 
-FROM alpine:edge
+FROM docker-alpine-base:latest
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
-LABEL version "1.2.0"
+LABEL version "1.3.0"
 
 EXPOSE 3306
 
@@ -13,16 +13,10 @@ WORKDIR /app
 VOLUME  /app
 
 RUN \
-  apk --quiet update && \
-  apk --quiet upgrade
+  apk update --quiet
 
 RUN \
-  rm -Rf /var/run && \
-  ln -s /run /var/run
-
-RUN \
-  apk --quiet add \
-    supervisor \
+  apk add --quiet \
     collectd \
     collectd-mysql \
     mysql \
