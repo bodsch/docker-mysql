@@ -3,14 +3,22 @@ FROM docker-alpine-base:latest
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
-LABEL version "1.3.0"
+LABEL version "1.3.2"
 
 EXPOSE 3306
 
+ENV WORK_DIR=/app
+ENV MYSQL_DATA_DIR=${WORK_DIR}/data
+ENV MYSQL_LOG_DIR=${WORK_DIR}/log
+ENV MYSQL_TMP_DIR=${WORK_DIR}/tmp
+
 # ---------------------------------------------------------------------------------------
 
-WORKDIR /app
-VOLUME  /app
+WORKDIR ${WORK_DIR}
+VOLUME  ${WORK_DIR}
+
+RUN \
+  mkdir -p /run/mysqld
 
 RUN \
   apk update --quiet
