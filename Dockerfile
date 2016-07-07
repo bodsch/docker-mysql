@@ -19,19 +19,15 @@ WORKDIR ${WORK_DIR}
 VOLUME  ${WORK_DIR}
 
 RUN \
-  mkdir -p /run/mysqld &&
-  apk update --quiet &&
+  mkdir -p /run/mysqld && \
+  apk update --quiet && \
   apk add --quiet \
     collectd \
     collectd-mysql \
     mysql \
     mysql-client \
-    pwgen
-
-RUN \
-  rm -rf /tmp/* /var/cache/apk/*
-
-RUN \
+    pwgen && \
+  rm -rf /tmp/* /var/cache/apk/* && \
   mv /etc/collectd/collectd.conf /etc/collectd/collectd.conf.DIST
 
 ADD rootfs/ /
