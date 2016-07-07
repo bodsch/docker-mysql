@@ -1,9 +1,10 @@
 
-FROM docker-alpine-base:latest
+# FROM docker-alpine-base:latest
+FROM bodsch/docker-alpine-base:latest
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
-LABEL version "1.3.2"
+LABEL version "1.4.0"
 
 EXPOSE 3306
 
@@ -18,12 +19,8 @@ WORKDIR ${WORK_DIR}
 VOLUME  ${WORK_DIR}
 
 RUN \
-  mkdir -p /run/mysqld
-
-RUN \
-  apk update --quiet
-
-RUN \
+  mkdir -p /run/mysqld &&
+  apk update --quiet &&
   apk add --quiet \
     collectd \
     collectd-mysql \
