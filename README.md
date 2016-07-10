@@ -6,7 +6,7 @@ Docker container with an running MySQL Database.
 The Container stores there Data at the Hostsystem in the Directory ```${HOME}/docker-data/mysql```
 
 # Status
-not yet supported
+[![Build Status](https://travis-ci.org/bodsch/docker-mysql.svg?branch=master)](https://travis-ci.org/bodsch/docker-mysql)
 
 # Build
 
