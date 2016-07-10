@@ -1,0 +1,12 @@
+sudo: required
+
+services:
+  - docker
+
+install:
+  - docker build --tag bodsch/docker-mysql .
+  - docker run --detach --name mysql bodsch/docker-mysql
+
+script:
+  - docker ps | grep -q mysql
+
