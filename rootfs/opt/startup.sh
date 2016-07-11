@@ -44,8 +44,8 @@ EOF
     cat << EOF > ${bootstrap}
 USE mysql;
 update user set host = '%' where host != 'localhost' and host != '127.0.0.1' and host != '::1';
-UPDATE user SET password=PASSWORD("${MYSQL_ROOT_PASSWORD}") WHERE user='root' and host != 'localhost';
-UPDATE user SET password="" WHERE user='root' AND host='%';
+UPDATE user SET password = "" WHERE user = 'root' AND host = 'localhost';
+UPDATE user SET password = PASSWORD("${MYSQL_ROOT_PASSWORD}") WHERE user = 'root' and host != 'localhost';
 
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
