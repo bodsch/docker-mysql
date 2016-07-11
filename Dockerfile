@@ -3,7 +3,7 @@ FROM bodsch/docker-alpine-base:latest
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
-LABEL version "1.5.0"
+LABEL version "1.5.1"
 
 EXPOSE 3306
 

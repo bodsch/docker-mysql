@@ -1,6 +1,8 @@
 #!/bin/sh
 #
 
+# set -x
+
 WORK_DIR=${WORK_DIR:-/srv}
 WORK_DIR=${WORK_DIR}/mysql
 
@@ -10,7 +12,7 @@ MYSQL_TMP_DIR=${WORK_DIR}/tmp
 MYSQL_RUN_DIR=${WORK_DIR}/run
 
 MYSQL_SYSTEM_USER=$(grep user /etc/mysql/my.cnf | cut -d '=' -f 2 | sed 's| ||g')
-MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-$(pwgen -s 15 1)}
+MYSQL_ROOT_PASS=${MYSQL_ROOT_PASS:-$(pwgen -s 15 1)}
 
 MYSQL_OPTS="--batch --skip-column-names "
 MYSQL_BIN=$(which mysql)
@@ -27,7 +29,7 @@ bootstrapDatabase() {
   [ -d ${MYSQL_TMP_DIR} ]  || mkdir -p ${MYSQL_TMP_DIR}
   [ -d ${MYSQL_RUN_DIR} ]  || mkdir -p ${MYSQL_RUN_DIR}
 
-  chown -Rv ${MYSQL_SYSTEM_USER}: ${WORK_DIR}
+  chown -R ${MYSQL_SYSTEM_USER}: ${WORK_DIR}
 
   if [ ! -f ${bootstrap} ]
   then
@@ -45,7 +47,7 @@ EOF
 USE mysql;
 update user set host = '%' where host != 'localhost' and host != '127.0.0.1' and host != '::1';
 UPDATE user SET password = "" WHERE user = 'root' AND host = 'localhost';
-UPDATE user SET password = PASSWORD("${MYSQL_ROOT_PASSWORD}") WHERE user = 'root' and host != 'localhost';
+UPDATE user SET password = PASSWORD("${MYSQL_ROOT_PASS}") WHERE user = 'root' and host != 'localhost';
 
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
@@ -74,7 +76,7 @@ EOF
   fi
 }
 
-startDatabase() {
+startSupervisor() {
 
   echo -e "\n Starting Supervisor.\n\n"
 
@@ -90,11 +92,11 @@ run() {
   if [ ! -z ${MYSQL_BIN} ]
   then
     bootstrapDatabase
-    startDatabase
+    startSupervisor
 
     echo -e "\n"
     echo " ==================================================================="
-    echo " MySQL user 'root' password set to '${MYSQL_ROOT_PASSWORD}'"
+    echo " MySQL user 'root' password set to '${MYSQL_ROOT_PASS}'"
     echo " ==================================================================="
     echo ""
   else
