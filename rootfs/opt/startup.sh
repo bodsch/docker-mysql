@@ -5,7 +5,10 @@
 if [ ${DEBUG} ]
 then
   set -x
+  set -e
 fi
+
+HOSTNAME=$(hostname -s)
 
 WORK_DIR=${WORK_DIR:-/srv}
 WORK_DIR=${WORK_DIR}/mysql
@@ -38,59 +41,41 @@ bootstrapDatabase() {
   if [ ! -f ${bootstrap} ]
   then
 
+    [ -f /root/.my.cnf ] && rm /root/.my.cnf
+
+    mysql_install_db --user=${MYSQL_SYSTEM_USER} > /dev/null
+    /usr/bin/mysqld_safe --syslog-tag=init &
+    sleep 10s
+
+    (
+      echo "USE mysql;"
+      echo "UPDATE user SET password = PASSWORD('${MYSQL_ROOT_PASS}') WHERE user = 'root';"
+      echo "create user 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASS}';"
+      echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;"
+      echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;"
+      echo "FLUSH PRIVILEGES;"
+    ) | mysql --host=localhost
+
+    killall mysqld
+    sleep 5s
+
     cat << EOF > /root/.my.cnf
 [client]
 host     = localhost
 user     = root
-password = ${MYSQL_RUN_PASSWORD}
+password = ${MYSQL_ROOT_PASS}
 socket   = ${MYSQL_RUN_DIR}/mysql.sock
 
 EOF
+    touch ${bootstrap}
 
-    cat << EOF > ${bootstrap}
-USE mysql;
-update user set host = '%' where host != 'localhost' and host != '127.0.0.1' and host != '::1';
-UPDATE user SET password = "" WHERE user = 'root';
-UPDATE user SET password = PASSWORD("${MYSQL_ROOT_PASS}") WHERE user = 'root' and host != 'localhost';
-
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
-
-FLUSH PRIVILEGES;
-EOF
-
-    mysql_install_db --user=${MYSQL_SYSTEM_USER} > /dev/null
-
-    if [ "${MYSQL_DATABASE}" != "" ]
-    then
-      echo " [i] Creating database: ${MYSQL_DATABASE}"
-
-      cat << EOF >> ${bootstrap}
---- Creating database: ${MYSQL_DATABASE}
-CREATE DATABASE IF NOT EXISTS `${MYSQL_DATABASE}` CHARACTER SET utf8 COLLATE utf8_general_ci;
-
-EOF
-#       echo "--- Creating database: ${MYSQL_DATABASE}" >> ${bootstrap}
-#       echo "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\` CHARACTER SET utf8 COLLATE utf8_general_ci;" >> ${bootstrap}
-
-      if [ "${MYSQL_USER}" != "" ]
-      then
-        echo " [i] Creating user: ${MYSQL_USER} with password ${MYSQL_PASSWORD}"
-
-        cat << EOF >> ${bootstrap}
---- Creating user: ${MYSQL_USER} with password ${MYSQL_PASSWORD}
-GRANT ALL ON `${MYSQL_DATABASE}`.* to '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
-
-EOF
-#         echo "--- Creating user: ${MYSQL_USER} with password ${MYSQL_PASSWORD}" >> ${bootstrap}
-#         echo "GRANT ALL ON \`${MYSQL_DATABASE}\`.* to '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';" >> ${bootstrap}
-      fi
-    fi
-
-    /usr/bin/mysqld --user=${MYSQL_SYSTEM_USER} --bootstrap --verbose=1 < ${bootstrap}
-
+    sed -i \
+      -e 's|^bind-address|# bind-address|g' \
+      /etc/mysql/*.cnf
   fi
+
 }
+
 
 startSupervisor() {
 
