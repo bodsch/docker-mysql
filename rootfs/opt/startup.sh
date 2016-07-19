@@ -68,12 +68,11 @@ socket   = ${MYSQL_RUN_DIR}/mysql.sock
 
 EOF
     touch ${bootstrap}
-
-    sed -i \
-      -e 's|^bind-address|# bind-address|g' \
-      /etc/mysql/*.cnf
   fi
 
+  sed -i \
+    -e 's|^bind-address|# bind-address|g' \
+    /etc/mysql/*.cnf
 }
 
 
