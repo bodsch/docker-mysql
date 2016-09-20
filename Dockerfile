@@ -1,9 +1,9 @@
 
-FROM bodsch/docker-alpine-base:3.4
+FROM bodsch/docker-alpine-base:1609-01
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
-LABEL version "1.5.1"
+LABEL version "1.2.0"
 
 EXPOSE 3306
 
@@ -11,6 +11,7 @@ EXPOSE 3306
 
 RUN \
   apk --quiet --no-cache update && \
+  apk --quiet --no-cache upgrade && \
   apk --quiet --no-cache add \
     mysql \
     mysql-client \
