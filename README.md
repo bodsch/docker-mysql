@@ -43,8 +43,8 @@ You can find the Container also at  [DockerHub](https://hub.docker.com/r/bodsch/
 
 # Supported Environmentvars
 
- - ```MYSQL_ROOT_PASSWORD``` (default: ```generated with $(pwgen -s 15 1)```)
- - ```MYSQL_SYSTEM_USER```   (default: ```generated with $(grep user /etc/mysql/my.cnf | cut -d '=' -f 2 | sed 's| ||g')```)
+ - ```MYSQL_ROOT_PASSWORD``` (default: generated with ```$(pwgen -s 15 1)```)
+ - ```MYSQL_SYSTEM_USER```   (default: generated with ```$(grep user /etc/mysql/my.cnf | cut -d '=' -f 2 | sed 's| ||g')```)
 
 
 # Ports
