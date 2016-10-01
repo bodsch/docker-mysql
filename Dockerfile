@@ -1,9 +1,9 @@
 
-FROM bodsch/docker-alpine-base:1609-01
+FROM bodsch/docker-alpine-base:1610-01
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
-LABEL version "1.2.0"
+LABEL version "1.2.1"
 
 EXPOSE 3306
 
@@ -16,9 +16,11 @@ RUN \
     mysql \
     mysql-client \
     pwgen && \
-  rm -rf /tmp/* /var/cache/apk/*
+  rm -rf \
+    /tmp/* \
+    /var/cache/apk/*
 
-ADD rootfs/ /
+COPY rootfs/ /
 
 CMD [ "/opt/startup.sh" ]
 
