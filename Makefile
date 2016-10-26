@@ -35,15 +35,15 @@ shell:
 		--volume=${DATA_DIR}:/srv \
 		--hostname=${CONTAINER} \
 		--name=${CONTAINER} \
-		$(IMAGE_NAME)
+		$(IMAGE_NAME) \
+		/bin/bash
 
 exec:
 	docker \
 		exec \
 		--interactive \
 		--tty \
-		${CONTAINER} \
-		/bin/bash
+		${CONTAINER}
 
 stop:
 	docker \
