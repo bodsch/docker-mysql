@@ -1,24 +1,27 @@
 
-FROM bodsch/docker-alpine-base:3.4
+FROM bodsch/docker-alpine-base:1612-01
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
-LABEL version "1.5.1"
+LABEL version "1.2.3"
 
 EXPOSE 3306
 
 # ---------------------------------------------------------------------------------------
 
 RUN \
-  apk --quiet --no-cache update && \
-  apk --quiet --no-cache add \
+  apk --no-cache update && \
+  apk --no-cache upgrade && \
+  apk --no-cache add \
     mysql \
     mysql-client \
     pwgen && \
-  rm -rf /tmp/* /var/cache/apk/*
+  rm -rf \
+    /tmp/* \
+    /var/cache/apk/*
 
-ADD rootfs/ /
+COPY rootfs/ /
 
-CMD [ "/opt/startup.sh" ]
+CMD /opt/startup.sh
 
 # ---------------------------------------------------------------------------------------
