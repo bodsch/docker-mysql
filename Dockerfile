@@ -1,5 +1,5 @@
 
-FROM bodsch/docker-alpine-base:1612-01
+FROM bodsch/docker-alpine-base:1701-02
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
@@ -16,12 +16,17 @@ RUN \
     mysql \
     mysql-client \
     pwgen && \
+  apk del --purge \
+    bash \
+    nano \
+    tree \
+    curl && \
   rm -rf \
     /tmp/* \
     /var/cache/apk/*
 
 COPY rootfs/ /
 
-CMD /opt/startup.sh
+CMD [ "/opt/startup.sh" ]
 
 # ---------------------------------------------------------------------------------------

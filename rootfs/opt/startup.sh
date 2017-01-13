@@ -92,13 +92,16 @@ run() {
   if [ ! -z ${MYSQL_BIN} ]
   then
     bootstrapDatabase
-    startSupervisor
 
-    echo -e "\n"
-    echo " ==================================================================="
-    echo " MySQL user 'root' password set to '${MYSQL_ROOT_PASS}'"
-    echo " ==================================================================="
-    echo ""
+    /usr/bin/mysqld --user=mysql --console
+
+#     startSupervisor
+
+#     echo -e "\n"
+#     echo " ==================================================================="
+#     echo " MySQL user 'root' password set to '${MYSQL_ROOT_PASS}'"
+#     echo " ==================================================================="
+#     echo ""
   else
     echo " [E] no MySQL binary found!"
     exit 1
