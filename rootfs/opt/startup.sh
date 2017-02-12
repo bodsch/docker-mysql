@@ -76,29 +76,21 @@ EOF
 }
 
 
-startSupervisor() {
-
-  echo -e "\n Starting Supervisor.\n\n"
-
-  if [ -f /etc/supervisord.conf ]
-  then
-    /usr/bin/supervisord -c /etc/supervisord.conf >> /dev/null
-  fi
-}
-
-
 run() {
 
   if [ ! -z ${MYSQL_BIN} ]
   then
     bootstrapDatabase
-    startSupervisor
 
-    echo -e "\n"
-    echo " ==================================================================="
-    echo " MySQL user 'root' password set to '${MYSQL_ROOT_PASS}'"
-    echo " ==================================================================="
-    echo ""
+    /usr/bin/mysqld --user=mysql --console
+
+#     startSupervisor
+
+#     echo -e "\n"
+#     echo " ==================================================================="
+#     echo " MySQL user 'root' password set to '${MYSQL_ROOT_PASS}'"
+#     echo " ==================================================================="
+#     echo ""
   else
     echo " [E] no MySQL binary found!"
     exit 1
