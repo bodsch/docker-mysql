@@ -3,7 +3,7 @@ FROM alpine:latest
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
-LABEL version="1702-02"
+LABEL version="1704-01"
 
 ENV \
   ALPINE_MIRROR="dl-cdn.alpinelinux.org" \
