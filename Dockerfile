@@ -3,14 +3,25 @@ FROM alpine:latest
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
-LABEL version="1704-01"
+LABEL version="1704-03"
 
 ENV \
   ALPINE_MIRROR="dl-cdn.alpinelinux.org" \
-  ALPINE_VERSION="v3.5" \
+  ALPINE_VERSION="edge" \
   TERM=xterm
 
 EXPOSE 3306
+
+LABEL org.label-schema.build-date=${BUILD_DATE} \
+      org.label-schema.name="MySQL Docker Image" \
+      org.label-schema.description="Inofficial MySQL Docker Image" \
+      org.label-schema.url="http://www.mysql.com" \
+      org.label-schema.vcs-url="https://github.com/bodsch/docker-mysql" \
+      org.label-schema.vendor="Bodo Schulz" \
+      org.label-schema.version=${ICINGA_VERSION} \
+      org.label-schema.schema-version="1.0" \
+      com.microscaling.docker.dockerfile="/Dockerfile" \
+      com.microscaling.license="unlicense"
 
 # ---------------------------------------------------------------------------------------
 
@@ -29,6 +40,6 @@ RUN \
 
 COPY rootfs/ /
 
-CMD [ "/opt/startup.sh" ]
+CMD [ "/init/run.sh" ]
 
 # ---------------------------------------------------------------------------------------
