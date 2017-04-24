@@ -1,54 +1,73 @@
 
-CONTAINER  := mysql
-IMAGE_NAME := docker-mysql
+include env_make
+NS = bodsch
+VERSION ?= latest
 
-DATA_DIR   := /tmp/docker-data
-MYSQL_ROOT_PASSWORD := $(MYSQL_ROOT_PASSWORD)
+REPO = docker-mysql
+NAME = mysql
+INSTANCE = default
+
+.PHONY: build push shell run start stop rm release
 
 
 build:
-	mkdir -vp ${DATA_DIR}
-	docker \
-		build \
-		--rm --tag=$(IMAGE_NAME) .
-	@echo Image tag: ${IMAGE_NAME}
-
-run:
-	docker \
-		run \
-		--detach \
-		--interactive \
-		--tty \
-		--env MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} \
-		--volume=${DATA_DIR}:/srv \
-		--hostname=${CONTAINER} \
-		--name=${CONTAINER} \
-		$(IMAGE_NAME)
-
-shell:
-	docker \
-		run \
+	docker build \
 		--rm \
-		--interactive \
-		--tty \
-		--env MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} \
-		--volume=${DATA_DIR}:/srv \
-		--hostname=${CONTAINER} \
-		--name=${CONTAINER} \
-		$(IMAGE_NAME) \
-		/bin/sh
+		--tag $(NS)/$(REPO):$(VERSION) .
 
-exec:
-	docker \
-		exec \
-		--interactive \
-		--tty \
-		${CONTAINER}
-
-stop:
-	docker \
-		kill ${CONTAINER}
+clean:
+	docker rmi \
+		$(NS)/$(REPO):$(VERSION)
 
 history:
-	docker \
-		history ${IMAGE_NAME}
+	docker history \
+		$(NS)/$(REPO):$(VERSION)
+
+push:
+	docker push \
+		$(NS)/$(REPO):$(VERSION)
+
+shell:
+	docker run \
+		--rm \
+		--name $(NAME)-$(INSTANCE) \
+		--interactive \
+		--tty \
+		$(PORTS) \
+		$(VOLUMES) \
+		$(ENV) \
+		$(NS)/$(REPO):$(VERSION) \
+		/bin/sh
+
+run:
+	docker run \
+		--rm \
+		--name $(NAME)-$(INSTANCE) \
+		$(PORTS) \
+		$(VOLUMES) \
+		$(ENV) \
+		$(NS)/$(REPO):$(VERSION)
+
+start:
+	docker run \
+		--detach \
+		--name $(NAME)-$(INSTANCE) \
+		$(PORTS) \
+		$(VOLUMES) \
+		$(ENV) \
+		$(NS)/$(REPO):$(VERSION)
+
+stop:
+	docker stop \
+		$(NAME)-$(INSTANCE)
+
+rm:
+	docker rm \
+		$(NAME)-$(INSTANCE)
+
+release: build
+	make push -e VERSION=$(VERSION)
+
+default: build
+
+

@@ -1,40 +1,52 @@
 #!/bin/sh
 #
 
-
-if [ ${DEBUG} ]
-then
-  set -x
-  set -e
-fi
-
 HOSTNAME=$(hostname -s)
 
-WORK_DIR=${WORK_DIR:-/srv}
-WORK_DIR=${WORK_DIR}/mysql
+WORK_DIR=/srv/mysql
 
 MYSQL_DATA_DIR=${WORK_DIR}/data
 MYSQL_LOG_DIR=${WORK_DIR}/log
 MYSQL_TMP_DIR=${WORK_DIR}/tmp
 MYSQL_RUN_DIR=${WORK_DIR}/run
+MYSQL_INNODB_DIR=${WORK_DIR}/innodb
 
-MYSQL_SYSTEM_USER=$(grep user /etc/mysql/my.cnf | cut -d '=' -f 2 | sed 's| ||g')
+MYSQL_SYSTEM_USER=${MYSQL_SYSTEM_USER:-$(grep user /etc/mysql/my.cnf | cut -d '=' -f 2 | sed 's| ||g')}
 MYSQL_ROOT_PASS=${MYSQL_ROOT_PASS:-$(pwgen -s 15 1)}
 
 MYSQL_OPTS="--batch --skip-column-names "
 MYSQL_BIN=$(which mysql)
 
-bootstrapDatabase() {
 
-  bootstrap="${WORK_DIR}/mysql-bootstrap"
+setSystemUser() {
+
+  local current_user=$(grep user /etc/mysql/my.cnf | cut -d '=' -f 2 | sed 's| ||g')
+
+  if [ "${MYSQL_SYSTEM_USER}" = "${current_user}" ]
+  then
+    return
+  fi
 
   sed -i \
-    -e "s|%WORK_DIR%|${WORK_DIR}|g" /etc/mysql/my.cnf
+    -e "s/\(user.*=\).*/\1 ${MYSQL_SYSTEM_USER}/g" \
+    /etc/mysql/my.cnf
+}
 
-  [ -d ${MYSQL_DATA_DIR} ] || mkdir -p ${MYSQL_DATA_DIR}
-  [ -d ${MYSQL_LOG_DIR} ]  || mkdir -p ${MYSQL_LOG_DIR}
-  [ -d ${MYSQL_TMP_DIR} ]  || mkdir -p ${MYSQL_TMP_DIR}
-  [ -d ${MYSQL_RUN_DIR} ]  || mkdir -p ${MYSQL_RUN_DIR}
+
+bootstrapDatabase() {
+
+  bootstrap="${WORK_DIR}/bootstrapped"
+
+  sed -i \
+    -e "s|%WORK_DIR%|${WORK_DIR}|g" \
+    -e "s/\(bind-address.*=\).*/\1 0.0.0.0/g" \
+    /etc/mysql/my.cnf
+
+  [ -d ${MYSQL_DATA_DIR} ]        || mkdir -p ${MYSQL_DATA_DIR}
+  [ -d ${MYSQL_LOG_DIR} ]         || mkdir -p ${MYSQL_LOG_DIR}
+  [ -d ${MYSQL_TMP_DIR} ]         || mkdir -p ${MYSQL_TMP_DIR}
+  [ -d ${MYSQL_RUN_DIR} ]         || mkdir -p ${MYSQL_RUN_DIR}
+  [ -d ${MYSQL_INNODB_DIR} ]      || mkdir -p ${MYSQL_INNODB_DIR}
 
   chown -R ${MYSQL_SYSTEM_USER}: ${WORK_DIR}
 
@@ -56,8 +68,9 @@ bootstrapDatabase() {
       echo "FLUSH PRIVILEGES;"
     ) | mysql --host=localhost
 
+    sleep 2s
+
     killall mysqld
-    sleep 5s
 
     cat << EOF > /root/.my.cnf
 [client]
@@ -68,11 +81,9 @@ socket   = ${MYSQL_RUN_DIR}/mysql.sock
 
 EOF
     touch ${bootstrap}
+
   fi
 
-  sed -i \
-    -e 's|^bind-address|# bind-address|g' \
-    /etc/mysql/*.cnf
 }
 
 
@@ -80,17 +91,16 @@ run() {
 
   if [ ! -z ${MYSQL_BIN} ]
   then
+
+    setSystemUser
+
     bootstrapDatabase
 
-    /usr/bin/mysqld --user=mysql --console
+    /usr/bin/mysqld \
+      --user=${MYSQL_SYSTEM_USER} \
+      --userstat \
+      --console
 
-#     startSupervisor
-
-#     echo -e "\n"
-#     echo " ==================================================================="
-#     echo " MySQL user 'root' password set to '${MYSQL_ROOT_PASS}'"
-#     echo " ==================================================================="
-#     echo ""
   else
     echo " [E] no MySQL binary found!"
     exit 1
