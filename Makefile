@@ -9,8 +9,6 @@ INSTANCE = default
 
 .PHONY: build push shell run start stop rm release
 
-$(warning $(FOO) $(origin FOO))
-
 
 build:
 	docker build \

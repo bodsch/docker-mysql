@@ -8,17 +8,19 @@ LABEL version="1704-03"
 ENV \
   ALPINE_MIRROR="dl-cdn.alpinelinux.org" \
   ALPINE_VERSION="edge" \
-  TERM=xterm
+  TERM=xterm \
+  BUILD_DATE="2017-04-17" \
+  MARIADB_VERSION="10.1.22-r1" \
 
 EXPOSE 3306
 
 LABEL org.label-schema.build-date=${BUILD_DATE} \
-      org.label-schema.name="MySQL Docker Image" \
-      org.label-schema.description="Inofficial MySQL Docker Image" \
-      org.label-schema.url="http://www.mysql.com" \
+      org.label-schema.name="MariaDB Docker Image" \
+      org.label-schema.description="Inofficial MariaDB Docker Image" \
+      org.label-schema.url="https://www.mariadb.com" \
       org.label-schema.vcs-url="https://github.com/bodsch/docker-mysql" \
       org.label-schema.vendor="Bodo Schulz" \
-      org.label-schema.version=${ICINGA_VERSION} \
+      org.label-schema.version=${MARIADB_VERSION} \
       org.label-schema.schema-version="1.0" \
       com.microscaling.docker.dockerfile="/Dockerfile" \
       com.microscaling.license="unlicense"
@@ -31,8 +33,8 @@ RUN \
   apk --no-cache update && \
   apk --no-cache upgrade && \
   apk --no-cache add \
-    mysql \
-    mysql-client \
+    mariadb \
+    mariadb-client \
     pwgen && \
   rm -rf \
     /tmp/* \

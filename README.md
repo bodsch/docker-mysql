@@ -6,7 +6,15 @@ Docker container with an running MySQL Database.
 The Container stores there Data at the Hostsystem in the Directory `/tmp/docker-data/mysql` or in a configured Datadirectory.
 
 # Status
-[![Build Status](https://travis-ci.org/bodsch/docker-mysql.svg?branch=1704-01)](https://travis-ci.org/bodsch/docker-mysql)
+
+[![Docker Pulls](https://img.shields.io/docker/pulls/bodsch/docker-mysql.svg?branch=1704-01)][hub]
+[![Image Size](https://images.microbadger.com/badges/image/bodsch/docker-mysql.svg?branch=1704-01)][microbadger]
+[![Build Status](https://travis-ci.org/bodsch/docker-mysql.svg?branch=1704-01)][travis]
+
+[hub]: https://hub.docker.com/r/bodsch/docker-mysql/
+[microbadger]: https://microbadger.com/images/bodsch/docker-mysql
+[travis]: https://travis-ci.org/bodsch/docker-mysql
+
 
 # Build
 

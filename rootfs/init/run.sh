@@ -1,8 +1,6 @@
 #!/bin/sh
 #
 
-set -x
-
 HOSTNAME=$(hostname -s)
 
 WORK_DIR=/srv/mysql
@@ -98,10 +96,10 @@ run() {
 
     bootstrapDatabase
 
-#    /usr/bin/mysqld \
-#      --user=${MYSQL_SYSTEM_USER} \
-#      --userstat \
-#      --console
+    /usr/bin/mysqld \
+      --user=${MYSQL_SYSTEM_USER} \
+      --userstat \
+      --console
 
   else
     echo " [E] no MySQL binary found!"
