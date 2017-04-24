@@ -9,8 +9,8 @@ ENV \
   ALPINE_MIRROR="dl-cdn.alpinelinux.org" \
   ALPINE_VERSION="edge" \
   TERM=xterm \
-  BUILD_DATE="2017-04-17" \
-  MARIADB_VERSION="10.1.22-r1" \
+  BUILD_DATE="2017-04-24" \
+  MARIADB_VERSION="10.1.22-r1"
 
 EXPOSE 3306
 
