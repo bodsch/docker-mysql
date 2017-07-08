@@ -1,29 +1,29 @@
 
-FROM alpine:latest
+FROM alpine:3.6
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
-LABEL version="1704-03"
-
 ENV \
-  ALPINE_MIRROR="dl-cdn.alpinelinux.org" \
-  ALPINE_VERSION="edge" \
+  ALPINE_MIRROR="mirror1.hs-esslingen.de/pub/Mirrors" \
+  ALPINE_VERSION="v3.6" \
   TERM=xterm \
-  BUILD_DATE="2017-04-24" \
-  MARIADB_VERSION="10.1.22-r1"
+  BUILD_DATE="2017-07-08" \
+  VERSION="10.1.22-r1"
 
 EXPOSE 3306
 
-LABEL org.label-schema.build-date=${BUILD_DATE} \
-      org.label-schema.name="MariaDB Docker Image" \
-      org.label-schema.description="Inofficial MariaDB Docker Image" \
-      org.label-schema.url="https://www.mariadb.com" \
-      org.label-schema.vcs-url="https://github.com/bodsch/docker-mysql" \
-      org.label-schema.vendor="Bodo Schulz" \
-      org.label-schema.version=${MARIADB_VERSION} \
-      org.label-schema.schema-version="1.0" \
-      com.microscaling.docker.dockerfile="/Dockerfile" \
-      com.microscaling.license="unlicense"
+LABEL \
+  version="1707-27.1" \
+  org.label-schema.build-date=${BUILD_DATE} \
+  org.label-schema.name="MariaDB Docker Image" \
+  org.label-schema.description="Inofficial MariaDB Docker Image" \
+  org.label-schema.url="https://www.mariadb.com" \
+  org.label-schema.vcs-url="https://github.com/bodsch/docker-mysql" \
+  org.label-schema.vendor="Bodo Schulz" \
+  org.label-schema.version=${VERSION} \
+  org.label-schema.schema-version="1.0" \
+  com.microscaling.docker.dockerfile="/Dockerfile" \
+  com.microscaling.license="unlicense"
 
 # ---------------------------------------------------------------------------------------
 
