@@ -7,13 +7,13 @@ ENV \
   ALPINE_MIRROR="mirror1.hs-esslingen.de/pub/Mirrors" \
   ALPINE_VERSION="v3.6" \
   TERM=xterm \
-  BUILD_DATE="2017-05-27" \
+  BUILD_DATE="2017-07-08" \
   VERSION="10.1.22-r1"
 
 EXPOSE 3306
 
 LABEL \
-  version="1705-04.1" \
+  version="1707-27.1" \
   org.label-schema.build-date=${BUILD_DATE} \
   org.label-schema.name="MariaDB Docker Image" \
   org.label-schema.description="Inofficial MariaDB Docker Image" \
