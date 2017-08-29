@@ -7,9 +7,9 @@ The Container stores there Data at the Hostsystem in the Directory `/tmp/docker-
 
 # Status
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/bodsch/docker-mysql.svg?branch=1705-01)][hub]
-[![Image Size](https://images.microbadger.com/badges/image/bodsch/docker-mysql.svg?branch=1705-01)][microbadger]
-[![Build Status](https://travis-ci.org/bodsch/docker-mysql.svg?branch=1705-01)][travis]
+[![Docker Pulls](https://img.shields.io/docker/pulls/bodsch/docker-mysql.svg?branch)][hub]
+[![Image Size](https://images.microbadger.com/badges/image/bodsch/docker-mysql.svg?branch)][microbadger]
+[![Build Status](https://travis-ci.org/bodsch/docker-mysql.svg?branch)][travis]
 
 [hub]: https://hub.docker.com/r/bodsch/docker-mysql/
 [microbadger]: https://microbadger.com/images/bodsch/docker-mysql
