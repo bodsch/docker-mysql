@@ -74,12 +74,6 @@ bootstrap_database() {
 
     killall mysqld
 
-  sed -i \
-    -e "s/\(bind-address.*=\).*/\1 0.0.0.0/g" \
-    /etc/mysql/my.cnf
-
-  grep bind-address /etc/mysql/my.cnf
-
     cat << EOF > /root/.my.cnf
 [client]
 host     = localhost
@@ -91,6 +85,12 @@ EOF
     touch ${bootstrap}
 
   fi
+
+  sed -i \
+    -e "s/\(bind-address.*=\).*/\1 0.0.0.0/g" \
+    /etc/mysql/my.cnf
+
+  grep bind-address /etc/mysql/my.cnf
 
 }
 
