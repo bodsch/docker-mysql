@@ -39,10 +39,7 @@ bootstrap_database() {
 
   sed -i \
     -e "s|%WORK_DIR%|${WORK_DIR}|g" \
-    -e "s/\(bind-address.*=\).*/\1 127.0.0.1/g" \
     /etc/mysql/my.cnf
-
-  grep bind-address /etc/mysql/my.cnf
 
   [ -d ${MYSQL_DATA_DIR} ]        || mkdir -p ${MYSQL_DATA_DIR}
   [ -d ${MYSQL_LOG_DIR} ]         || mkdir -p ${MYSQL_LOG_DIR}
@@ -83,15 +80,11 @@ socket   = ${MYSQL_RUN_DIR}/mysql.sock
 
 EOF
     touch ${bootstrap}
-
   fi
 
   sed -i \
     -e "s/\(bind-address.*=\).*/\1 0.0.0.0/g" \
     /etc/mysql/my.cnf
-
-  grep bind-address /etc/mysql/my.cnf
-
 }
 
 
