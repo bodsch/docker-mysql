@@ -7,13 +7,13 @@ ENV \
   ALPINE_MIRROR="mirror1.hs-esslingen.de/pub/Mirrors" \
   ALPINE_VERSION="v3.6" \
   TERM=xterm \
-  BUILD_DATE="2017-08-29" \
+  BUILD_DATE="2017-11-09" \
   VERSION="10.1.26-r0"
 
 EXPOSE 3306
 
 LABEL \
-  version="1708-35" \
+  version="1711" \
   org.label-schema.build-date=${BUILD_DATE} \
   org.label-schema.name="MariaDB Docker Image" \
   org.label-schema.description="Inofficial MariaDB Docker Image" \
@@ -36,11 +36,14 @@ RUN \
     mariadb \
     mariadb-client \
     pwgen && \
+  mkdir /etc/mysql/conf.d && \
   rm -rf \
     /tmp/* \
     /var/cache/apk/*
 
 COPY rootfs/ /
+
+VOLUME [ "/etc/mysql/conf.d" ]
 
 CMD [ "/init/run.sh" ]
 

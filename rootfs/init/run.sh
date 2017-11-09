@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 
-HOSTNAME=$(hostname -s)
+HOSTNAME=$(hostname -f)
 
 WORK_DIR=/srv/mysql
 
@@ -18,7 +18,7 @@ MYSQL_OPTS="--batch --skip-column-names "
 MYSQL_BIN=$(which mysql)
 
 
-setSystemUser() {
+set_system_user() {
 
   local current_user=$(grep user /etc/mysql/my.cnf | cut -d '=' -f 2 | sed 's| ||g')
 
@@ -33,14 +33,16 @@ setSystemUser() {
 }
 
 
-bootstrapDatabase() {
+bootstrap_database() {
 
   bootstrap="${WORK_DIR}/bootstrapped"
 
   sed -i \
     -e "s|%WORK_DIR%|${WORK_DIR}|g" \
-    -e "s/\(bind-address.*=\).*/\1 0.0.0.0/g" \
+    -e "s/\(bind-address.*=\).*/\1 127.0.0.1/g" \
     /etc/mysql/my.cnf
+
+  grep bind-address /etc/mysql/my.cnf
 
   [ -d ${MYSQL_DATA_DIR} ]        || mkdir -p ${MYSQL_DATA_DIR}
   [ -d ${MYSQL_LOG_DIR} ]         || mkdir -p ${MYSQL_LOG_DIR}
@@ -72,6 +74,12 @@ bootstrapDatabase() {
 
     killall mysqld
 
+  sed -i \
+    -e "s/\(bind-address.*=\).*/\1 0.0.0.0/g" \
+    /etc/mysql/my.cnf
+
+  grep bind-address /etc/mysql/my.cnf
+
     cat << EOF > /root/.my.cnf
 [client]
 host     = localhost
@@ -92,9 +100,9 @@ run() {
   if [ ! -z ${MYSQL_BIN} ]
   then
 
-    setSystemUser
+    set_system_user
 
-    bootstrapDatabase
+    bootstrap_database
 
     /usr/bin/mysqld \
       --user=${MYSQL_SYSTEM_USER} \
