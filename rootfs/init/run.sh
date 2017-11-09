@@ -71,6 +71,9 @@ bootstrap_database() {
 
     killall mysqld
 
+    touch ${bootstrap}
+  fi
+
     cat << EOF > /root/.my.cnf
 [client]
 host     = localhost
@@ -79,8 +82,6 @@ password = ${MYSQL_ROOT_PASS}
 socket   = ${MYSQL_RUN_DIR}/mysql.sock
 
 EOF
-    touch ${bootstrap}
-  fi
 
   sed -i \
     -e "s/\(bind-address.*=\).*/\1 0.0.0.0/g" \
