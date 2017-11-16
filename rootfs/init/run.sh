@@ -88,7 +88,7 @@ bootstrap_database() {
     touch ${bootstrap}
   fi
 
-    cat << EOF > /root/.my.cnf
+  cat << EOF > /root/.my.cnf
 [client]
 host     = localhost
 user     = root
