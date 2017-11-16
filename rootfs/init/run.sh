@@ -1,6 +1,8 @@
 #!/bin/sh
 #
 
+set -e
+
 HOSTNAME=$(hostname -f)
 
 WORK_DIR=/srv/mysql
@@ -52,12 +54,21 @@ bootstrap_database() {
   if [ ! -f ${bootstrap} ]
   then
 
+    echo " [i] - start bootstrapping"
+
     [ -f /root/.my.cnf ] && rm /root/.my.cnf
 
-    mysql_install_db --user=${MYSQL_SYSTEM_USER} > /dev/null
-    /usr/bin/mysqld_safe --syslog-tag=init &
+    echo " [i] - install initial databases"
+    mysql_install_db --user=${MYSQL_SYSTEM_USER} 1> /dev/null 2> /dev/null
+    [ $? -gt 0 ] && exit $?
+
+    echo " [i] - start initial instance in safe mode to set passwords"
+    /usr/bin/mysqld_safe --syslog-tag=init > /dev/null 2> /dev/null &
+    [ $? -gt 0 ] && exit $?
+
     sleep 10s
 
+    echo " [i] - create privileges for root access"
     (
       echo "USE mysql;"
       echo "UPDATE user SET password = PASSWORD('${MYSQL_ROOT_PASS}') WHERE user = 'root';"
@@ -65,11 +76,14 @@ bootstrap_database() {
       echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;"
       echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;"
       echo "FLUSH PRIVILEGES;"
-    ) | mysql --host=localhost
+    ) | mysql --host=localhost > /dev/null 2> /dev/null
+    [ $? -gt 0 ] && exit $?
 
     sleep 2s
 
+    echo " [i] - kill initial instance"
     killall mysqld
+    [ $? -gt 0 ] && exit $?
 
     touch ${bootstrap}
   fi
@@ -98,6 +112,7 @@ run() {
 
     bootstrap_database
 
+    echo " [i] - start instance"
     /usr/bin/mysqld \
       --user=${MYSQL_SYSTEM_USER} \
       --userstat \
