@@ -4,8 +4,6 @@ FROM alpine:3.6
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
 ENV \
-  ALPINE_MIRROR="mirror1.hs-esslingen.de/pub/Mirrors" \
-  ALPINE_VERSION="v3.6" \
   TERM=xterm \
   BUILD_DATE="2017-11-09" \
   VERSION="10.1.26-r0"
@@ -28,11 +26,9 @@ LABEL \
 # ---------------------------------------------------------------------------------------
 
 RUN \
-  echo "http://${ALPINE_MIRROR}/alpine/${ALPINE_VERSION}/main"       > /etc/apk/repositories && \
-  echo "http://${ALPINE_MIRROR}/alpine/${ALPINE_VERSION}/community" >> /etc/apk/repositories && \
-  apk --no-cache update && \
-  apk --no-cache upgrade && \
-  apk --no-cache add \
+  apk update --quiet --no-cache && \
+  apk upgrade --quiet --no-cache && \
+  apk add --quiet --no-cache \
     mariadb \
     mariadb-client \
     pwgen && \
