@@ -1,17 +1,16 @@
 
-FROM alpine:3.6
-
-MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
+FROM alpine:3.7
 
 ENV \
   TERM=xterm \
-  BUILD_DATE="2017-11-09" \
-  VERSION="10.1.26-r0"
+  BUILD_DATE="2018-01-15" \
+  VERSION="10.1.28"
 
 EXPOSE 3306
 
 LABEL \
-  version="1711" \
+  version="1801" \
+  maintainer="Bodo Schulz <bodo@boone-schulz.de>" \
   org.label-schema.build-date=${BUILD_DATE} \
   org.label-schema.name="MariaDB Docker Image" \
   org.label-schema.description="Inofficial MariaDB Docker Image" \
@@ -38,6 +37,12 @@ RUN \
     /var/cache/apk/*
 
 COPY rootfs/ /
+
+HEALTHCHECK \
+  --interval=5s \
+  --timeout=2s \
+  --retries=12 \
+  CMD /init/health_check.sh
 
 VOLUME [ "/etc/mysql/conf.d" ]
 
