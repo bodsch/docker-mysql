@@ -3,8 +3,8 @@ FROM alpine:3.7
 
 ENV \
   TERM=xterm \
-  BUILD_DATE="2018-01-15" \
-  VERSION="10.1.28"
+  BUILD_DATE="2018-05-04" \
+  VERSION="10.1.32"
 
 EXPOSE 3306
 
