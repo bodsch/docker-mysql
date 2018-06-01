@@ -10,11 +10,18 @@ env:
   global:
     - BUILD_DATE=$(date +"%Y-%m-%d")
   matrix:
-    - MARIADB_VERSION=$(cat ~/.deployment-env)
+    - MARIADB_VERSION=$(cat ${TRAVIS_BUILD_DIR}/.deployment-env)
+
+stages:
+  - environment
+  - build
 
 jobs:
   include:
-    - stage: build, test and push docker image
+    - stage: environment
+      script:
+        - .travis/export_environment.sh
+    - stage: build
       script:
         - make build
         - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
