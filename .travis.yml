@@ -9,8 +9,6 @@ before_script:
 env:
   global:
     - BUILD_DATE=$(date +"%Y-%m-%d")
-  matrix:
-    - MARIADB_VERSION=$(cat ${TRAVIS_BUILD_DIR}/.deployment-env)
 
 stages:
   - build
@@ -22,7 +20,7 @@ jobs:
         - .travis/export_environment.sh
         - make build
         - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
-        - docker push ${DOCKER_USERNAME}/docker-mysql:${MARIADB_VERSION}
+        - docker push ${DOCKER_USERNAME}/docker-mysql:$(cat ${TRAVIS_BUILD_DIR}/.deployment-env)
         - docker logout
 
 #install:
