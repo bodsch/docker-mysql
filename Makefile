@@ -8,12 +8,24 @@ REPO = docker-mysql
 NAME = mysql
 INSTANCE = default
 
+BUILD_DATE := $(shell date +%Y-%m-%d)
+BUILD_VERSION := $(shell date +%y%m)
+
 .PHONY: build push shell run start stop rm release
 
+default: build
+
+params:
+	@echo ""
+	@echo " BUILD_DATE     : $(BUILD_DATE)"
+	@echo ""
 
 build:
 	docker build \
-		--rm \
+		--force-rm \
+		--compress \
+		--build-arg BUILD_DATE=$(BUILD_DATE) \
+		--build-arg BUILD_VERSION=$(BUILD_VERSION) \
 		--tag $(NS)/$(REPO):$(VERSION) .
 
 clean:
