@@ -3,12 +3,9 @@ sudo: required
 services:
   - docker
 
-env:
-  global:
-    - BUILD_DATE=$(date +"%Y-%m-%d")
-
-stages:
-  - build
+install:
+  - docker build --tag bodsch/docker-mysql .
+  - docker run --detach --name mysql bodsch/docker-mysql
 
 jobs:
   include:
@@ -19,11 +16,3 @@ jobs:
         - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
         - make release
         - docker logout
-
-#install:
-#  - docker build --tag bodsch/docker-mysql .
-#  - docker run --detach --name mysql bodsch/docker-mysql
-#
-#script:
-#  - docker ps | grep -q mysql
-

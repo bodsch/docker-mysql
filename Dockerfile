@@ -1,10 +1,26 @@
 
-FROM alpine:latest
+FROM alpine:3.7
 
-ARG BUILD_DATE
-ARG BUILD_VERSION
+ENV \
+  TERM=xterm \
+  BUILD_DATE="2018-05-04" \
+  VERSION="10.1.32"
 
 EXPOSE 3306
+
+LABEL \
+  version="1801" \
+  maintainer="Bodo Schulz <bodo@boone-schulz.de>" \
+  org.label-schema.build-date=${BUILD_DATE} \
+  org.label-schema.name="MariaDB Docker Image" \
+  org.label-schema.description="Inofficial MariaDB Docker Image" \
+  org.label-schema.url="https://www.mariadb.com" \
+  org.label-schema.vcs-url="https://github.com/bodsch/docker-mysql" \
+  org.label-schema.vendor="Bodo Schulz" \
+  org.label-schema.version=${VERSION} \
+  org.label-schema.schema-version="1.0" \
+  com.microscaling.docker.dockerfile="/Dockerfile" \
+  com.microscaling.license="unlicense"
 
 # ---------------------------------------------------------------------------------------
 
@@ -15,8 +31,6 @@ RUN \
     mariadb \
     mariadb-client \
     pwgen && \
-  VERSION=$(apk info -s mariadb 2>/dev/null | grep mariadb | cut -d ' ' -f1 | cut -d '-' -f2) && \
-  echo -e "\nmariadb version ${VERSION} installed\n" && \
   mkdir /etc/mysql/conf.d && \
   rm -rf \
     /tmp/* \
@@ -33,19 +47,5 @@ HEALTHCHECK \
 VOLUME [ "/etc/mysql/conf.d" ]
 
 CMD [ "/init/run.sh" ]
-
-LABEL \
-  version="${BUILD_VERSION}" \
-  maintainer="Bodo Schulz <bodo@boone-schulz.de>" \
-  org.label-schema.build-date=${BUILD_DATE} \
-  org.label-schema.name="MariaDB Docker Image" \
-  org.label-schema.description="Inofficial MariaDB Docker Image" \
-  org.label-schema.url="https://www.mariadb.com" \
-  org.label-schema.vcs-url="https://github.com/bodsch/docker-mysql" \
-  org.label-schema.vendor="Bodo Schulz" \
-  org.label-schema.version=${VERSION} \
-  org.label-schema.schema-version="1.0" \
-  com.microscaling.docker.dockerfile="/Dockerfile" \
-  com.microscaling.license="unlicense"
 
 # ---------------------------------------------------------------------------------------
