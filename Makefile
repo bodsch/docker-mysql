@@ -86,7 +86,7 @@ rm:
 	docker rm \
 		$(NAME)-$(INSTANCE)
 
-release: get-version
+release:
 	make push -e VERSION=${MARIADB_VERSION}
 
 default: build
