@@ -3,16 +3,19 @@ sudo: required
 services:
   - docker
 
+before_script:
+  - .travis/export_environment.sh
+
 env:
   global:
     - BUILD_DATE=$(date +"%Y-%m-%d")
+  matrix:
+    - MARIADB_VERSION=$(cat ~/.deployment-env)
 
 jobs:
   include:
     - stage: build, test and push docker image
       script:
-        - .travis/export_environment.sh
-        - echo "${MARIADB_VERSION}"
         - make build
         - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
         - docker push ${DOCKER_USERNAME}/docker-mysql:${MARIADB_VERSION}
