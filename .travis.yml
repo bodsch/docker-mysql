@@ -20,7 +20,7 @@ jobs:
         - .travis/export_environment.sh
         - make build
         - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
-        - docker push ${DOCKER_USERNAME}/docker-mysql:$(cat ${TRAVIS_BUILD_DIR}/.deployment-env)
+        - docker push "${DOCKER_USERNAME}/docker-mysql:$(cat ${TRAVIS_BUILD_DIR}/.deployment-env)"
         - docker logout
 
 #install:
