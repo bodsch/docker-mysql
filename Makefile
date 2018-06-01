@@ -9,7 +9,7 @@ INSTANCE = default
 
 BUILD_DATE := $(shell date +%Y-%m-%d)
 BUILD_VERSION := $(shell date +%y%m)
-MARIADB_VERSION ?= latest
+MARIADB_VERSION ?= $(shell .travis/export_environment.sh)
 
 .PHONY: build push shell run start stop rm release
 
@@ -17,7 +17,7 @@ default: build
 
 params:
 	@echo ""
-	@echo " MARIADB_VERSION: ${MARIADB_VERSION}"
+	@echo " MARIADB_VERSION: $(MARIADB_VERSION)"
 	@echo " BUILD_DATE     : $(BUILD_DATE)"
 	@echo ""
 
@@ -86,7 +86,7 @@ rm:
 	docker rm \
 		$(NAME)-$(INSTANCE)
 
-release: build
+release: get-version
 	make push -e VERSION=${MARIADB_VERSION}
 
 default: build

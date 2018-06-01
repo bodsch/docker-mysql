@@ -3,9 +3,6 @@ sudo: required
 services:
   - docker
 
-before_script:
-  - .travis/export_environment.sh
-
 env:
   global:
     - BUILD_DATE=$(date +"%Y-%m-%d")
