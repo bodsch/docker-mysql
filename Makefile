@@ -2,31 +2,44 @@
 include env_make
 
 NS = bodsch
-VERSION ?= latest
 
 REPO = docker-mysql
 NAME = mysql
 INSTANCE = default
 
+BUILD_DATE := $(shell date +%Y-%m-%d)
+BUILD_VERSION := $(shell date +%y%m)
+MARIADB_VERSION ?= $(shell .travis/export_environment.sh)
+
 .PHONY: build push shell run start stop rm release
 
+default: build
 
-build:
+params:
+	@echo ""
+	@echo " MARIADB_VERSION: $(MARIADB_VERSION)"
+	@echo " BUILD_DATE     : $(BUILD_DATE)"
+	@echo ""
+
+build: params
 	docker build \
-		--rm \
-		--tag $(NS)/$(REPO):$(VERSION) .
+		--force-rm \
+		--compress \
+		--build-arg BUILD_DATE=$(BUILD_DATE) \
+		--build-arg BUILD_VERSION=$(BUILD_VERSION) \
+		--tag $(NS)/$(REPO):${MARIADB_VERSION} .
 
 clean:
 	docker rmi \
-		$(NS)/$(REPO):$(VERSION)
+		$(NS)/$(REPO):${MARIADB_VERSION}
 
 history:
 	docker history \
-		$(NS)/$(REPO):$(VERSION)
+		$(NS)/$(REPO):${MARIADB_VERSION}
 
 push:
 	docker push \
-		$(NS)/$(REPO):$(VERSION)
+		$(NS)/$(REPO):${MARIADB_VERSION}
 
 shell:
 	docker run \
@@ -37,7 +50,7 @@ shell:
 		$(PORTS) \
 		$(VOLUMES) \
 		$(ENV) \
-		$(NS)/$(REPO):$(VERSION) \
+		$(NS)/$(REPO):${MARIADB_VERSION} \
 		/bin/sh
 
 run:
@@ -47,7 +60,7 @@ run:
 		$(PORTS) \
 		$(VOLUMES) \
 		$(ENV) \
-		$(NS)/$(REPO):$(VERSION)
+		$(NS)/$(REPO):${MARIADB_VERSION}
 
 exec:
 	docker exec \
@@ -63,7 +76,7 @@ start:
 		$(PORTS) \
 		$(VOLUMES) \
 		$(ENV) \
-		$(NS)/$(REPO):$(VERSION)
+		$(NS)/$(REPO):${MARIADB_VERSION}
 
 stop:
 	docker stop \
@@ -73,8 +86,8 @@ rm:
 	docker rm \
 		$(NAME)-$(INSTANCE)
 
-release: build
-	make push -e VERSION=$(VERSION)
+release:
+	make push -e VERSION=${MARIADB_VERSION}
 
 default: build
 

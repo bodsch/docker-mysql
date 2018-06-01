@@ -7,6 +7,12 @@ install:
   - docker build --tag bodsch/docker-mysql .
   - docker run --detach --name mysql bodsch/docker-mysql
 
-script:
-  - docker ps | grep -q mysql
-
+jobs:
+  include:
+    - stage: build
+      script:
+        - .travis/export_environment.sh
+        - make build
+        - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
+        - make release
+        - docker logout
