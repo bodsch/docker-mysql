@@ -3,27 +3,10 @@ sudo: required
 services:
   - docker
 
-env:
-  global:
-    - BUILD_DATE=$(date +"%Y-%m-%d")
+install:
+  - docker build --tag bodsch/docker-mysql .
+  - docker run --detach --name mysql bodsch/docker-mysql
 
-jobs:
-  include:
-    - stage: build, test and push docker image
-    script:
-      - wget http://dl-cdn.alpinelinux.org/alpine/latest-stable/main/x86_64/APKINDEX.tar.gz
-      - tar -xzf APKINDEX.tar.gz
-      - version=$(grep -A1 "P:mariadb-common" APKINDEX | tail -n1 | cut -d ':' -f2 | cut -d '-' -f1)
-      - env: VERSION=${version}
-      - make build
-      - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
-      - docker push ${DOCKER_USERNAME}/docker-mysql:${VERSION}
-      - docker logout
-
-#install:
-#  - docker build --tag bodsch/docker-mysql .
-#  - docker run --detach --name mysql bodsch/docker-mysql
-#
-#script:
-#  - docker ps | grep -q mysql
+script:
+  - docker ps | grep -q mysql
 
