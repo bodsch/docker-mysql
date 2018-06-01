@@ -13,16 +13,13 @@ env:
     - MARIADB_VERSION=$(cat ${TRAVIS_BUILD_DIR}/.deployment-env)
 
 stages:
-  - environment
   - build
 
 jobs:
   include:
-    - stage: environment
-      script:
-        - .travis/export_environment.sh
     - stage: build
       script:
+        - .travis/export_environment.sh
         - make build
         - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
         - docker push ${DOCKER_USERNAME}/docker-mysql:${MARIADB_VERSION}
