@@ -1,0 +1,43 @@
+---
+version: '3.3'
+
+services:
+
+  consul-master:
+    image: bodsch/docker-consul
+    container_name: consul-master
+    hostname: consul-master
+    ports:
+      - 8400:8400
+      - 8500:8500
+      - 53:53
+    command: 'agent -data-dir /data -server -bootstrap-expect 1 -ui -client=0.0.0.0'
+
+#  registrator:
+#    image: gliderlabs/registrator:latest
+#    restart: always
+#    container_name: registrator
+#    hostname: registrator
+#    volumes:
+#      - /var/run/docker.sock:/tmp/docker.sock
+#    command: consul://consul-master:8500
+#    links:
+#      - consul-master
+##    network_mode: host
+#
+
+  database:
+    #image: bodsch/docker-mysql:10.1.28-r1
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - BUILD_DATE=${BUILD_DATE}
+    container_name: database
+    hostname: database
+    environment:
+      - MYSQL_SYSTEM_USER=root
+      - MYSQL_ROOT_PASS=vYUQ14SGVrJRi69PsujC
+      - CONSUL=consul-master
+    links:
+      - consul-master

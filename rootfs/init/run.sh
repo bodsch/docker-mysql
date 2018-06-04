@@ -113,6 +113,8 @@ run() {
 
     bootstrap_database
 
+    . /init/consul.sh
+
     log_info "start instance"
     /usr/bin/mysqld \
       --user=${MYSQL_SYSTEM_USER} \
