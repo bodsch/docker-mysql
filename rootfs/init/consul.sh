@@ -1,13 +1,10 @@
 #!/bin/sh
 
-if [[ -z "${CONSUL}" ]] || [[ -z "${CONFIG_BACKEND}"  ]]
-then
-  return
-fi
-
 log_info "use '${CONFIG_BACKEND}' as configuration backend"
 
 wait_for_consul() {
+
+  [[ -z "${CONSUL}" ]] || [[ -z "${CONFIG_BACKEND}"  ]] && return
 
   RETRY=50
   local http_response_code=0
@@ -36,6 +33,8 @@ wait_for_consul() {
 
 register_node()  {
 
+  [[ -z "${CONSUL}" ]] || [[ -z "${CONFIG_BACKEND}"  ]] && return
+
   local address=$(hostname -i)
 
   data=$(curl \
@@ -55,6 +54,8 @@ register_node()  {
 
 set_consul_var() {
 
+  [[ -z "${CONSUL}" ]] || [[ -z "${CONFIG_BACKEND}"  ]] && return
+
   local consul_key=${1}
   local consul_var=${2}
 
@@ -68,7 +69,9 @@ set_consul_var() {
 #    ${CONSUL}:8500/v1/kv/${consul_key}
 }
 
-get_consult_var() {
+get_consul_var() {
+
+  [[ -z "${CONSUL}" ]] || [[ -z "${CONFIG_BACKEND}"  ]] && return
 
   local consul_key=${1}
 
@@ -90,11 +93,3 @@ get_consult_var() {
   fi
 }
 
-if [[ "${CONFIG_BACKEND}" = "consul" ]]
-then
-  wait_for_consul
-  register_node
-  set_consul_var  'database/root/user' ${MYSQL_SYSTEM_USER}
-  set_consul_var  'database/root/password' ${MYSQL_ROOT_PASS}
-  set_consul_var  'database/url' ${HOSTNAME}
-fi

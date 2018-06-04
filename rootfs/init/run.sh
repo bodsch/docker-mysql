@@ -3,23 +3,10 @@
 
 set -e
 
-HOSTNAME=$(hostname -f)
-
-WORK_DIR=/srv/mysql
-
-MYSQL_DATA_DIR=${WORK_DIR}/data
-MYSQL_LOG_DIR=${WORK_DIR}/log
-MYSQL_TMP_DIR=${WORK_DIR}/tmp
-MYSQL_RUN_DIR=${WORK_DIR}/run
-MYSQL_INNODB_DIR=${WORK_DIR}/innodb
-
-MYSQL_SYSTEM_USER=${MYSQL_SYSTEM_USER:-$(grep user /etc/mysql/my.cnf | cut -d '=' -f 2 | sed 's| ||g')}
-MYSQL_ROOT_PASS=${MYSQL_ROOT_PASS:-$(pwgen -s 15 1)}
-
-MYSQL_OPTS="--batch --skip-column-names "
-MYSQL_BIN=$(which mysql)
-
 . /init/output.sh
+. /init/consul.sh
+. /init/environments.sh
+
 
 set_system_user() {
 
@@ -113,7 +100,14 @@ run() {
 
     bootstrap_database
 
-    . /init/consul.sh
+    if [[ "${CONFIG_BACKEND}" = "consul" ]]
+    then
+      # wait_for_consul
+      register_node
+      set_consul_var  "${HOSTNAME}/root/user" ${MYSQL_SYSTEM_USER}
+      set_consul_var  "${HOSTNAME}/root/password" ${MYSQL_ROOT_PASS}
+      set_consul_var  "${HOSTNAME}/url" ${HOSTNAME}
+    fi
 
     log_info "start instance"
     /usr/bin/mysqld \
