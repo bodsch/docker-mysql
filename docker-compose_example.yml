@@ -8,23 +8,32 @@ services:
     container_name: consul-master
     hostname: consul-master
     ports:
+      - 8300:8300
+      - 8301:8301
+      - 8301:8301/udp
+      - 8302:8302
+      - 8302:8302/udp
       - 8400:8400
       - 8500:8500
+      - 8600:8600
+      - 8600:8600/udp
       - 53:53
+    environment:
+      - CONSUL_UI_BETA=true
     command: 'agent -data-dir /data -server -bootstrap-expect 1 -ui -client=0.0.0.0'
 
-#  registrator:
-#    image: gliderlabs/registrator:latest
-#    restart: always
-#    container_name: registrator
-#    hostname: registrator
-#    volumes:
-#      - /var/run/docker.sock:/tmp/docker.sock
-#    command: consul://consul-master:8500
-#    links:
-#      - consul-master
-##    network_mode: host
-#
+  registrator:
+    image: gliderlabs/registrator:latest
+    restart: always
+    container_name: registrator
+    hostname: registrator
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+    command: consul://consul-master:8500
+    links:
+      - consul-master
+#    network_mode: host
+
 
   database:
     #image: bodsch/docker-mysql:10.1.28-r1
@@ -38,6 +47,7 @@ services:
     environment:
       - MYSQL_SYSTEM_USER=root
       - MYSQL_ROOT_PASS=vYUQ14SGVrJRi69PsujC
+      - CONFIG_BACKEND=consul
       - CONSUL=consul-master
     links:
       - consul-master
