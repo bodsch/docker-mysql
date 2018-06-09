@@ -4,7 +4,7 @@
 set -e
 
 . /init/output.sh
-. /init/consul.sh
+. /init/config_backend.sh
 . /init/environments.sh
 
 
@@ -100,13 +100,9 @@ run() {
 
     bootstrap_database
 
-    if [[ "${CONFIG_BACKEND}" = "consul" ]]
+    if [[ ! -z "${CONFIG_BACKEND_SERVER}" ]] && [[ ! -z "${CONFIG_BACKEND}" ]]
     then
-      # wait_for_consul
-      register_node
-      set_consul_var  "${HOSTNAME}/root/user" ${MYSQL_SYSTEM_USER}
-      set_consul_var  "${HOSTNAME}/root/password" ${MYSQL_ROOT_PASS}
-      set_consul_var  "${HOSTNAME}/url" ${HOSTNAME}
+      save_config
     fi
 
     log_info "start instance"

@@ -1,10 +1,8 @@
 #!/bin/sh
 
-log_info "use '${CONFIG_BACKEND}' as configuration backend"
-
 wait_for_consul() {
 
-  [[ -z "${CONSUL}" ]] || [[ -z "${CONFIG_BACKEND}"  ]] && return
+  [[ -z "${CONFIG_BACKEND_SERVER}" ]] || [[ -z "${CONFIG_BACKEND}"  ]] && return
 
   RETRY=50
   local http_response_code=0
@@ -15,7 +13,7 @@ wait_for_consul() {
       -w %{response_code} \
       --silent \
       --output /dev/null \
-      ${CONSUL}:8500/v1/health/service/consul)
+      ${CONFIG_BACKEND_SERVER}:8500/v1/health/service/consul)
 
     [[ 200 -eq $http_response_code ]] && break
 
@@ -26,21 +24,22 @@ wait_for_consul() {
 
   if [[ ${RETRY} -le 0 ]]
   then
-    log_error "could not connect to the consul master instance '${CONSUL}'"
-    exit 1
+    log_error "could not connect to the consul master instance '${CONFIG_BACKEND_SERVER}'"
+    CONSUL=
+    CONFIG_BACKEND=
   fi
 }
 
 register_node()  {
 
-  [[ -z "${CONSUL}" ]] || [[ -z "${CONFIG_BACKEND}"  ]] && return
+  [[ -z "${CONFIG_BACKEND_SERVER}" ]] || [[ -z "${CONFIG_BACKEND}"  ]] && return
 
   local address=$(hostname -i)
 
   data=$(curl \
     --silent \
     --request PUT \
-    ${CONSUL}:8500/v1/agent/service/register \
+    ${CONFIG_BACKEND_SERVER}:8500/v1/agent/service/register \
     --data '{
       "ID": "'${HOSTNAME}'",
       "Name": "'${HOSTNAME}'",
@@ -54,7 +53,7 @@ register_node()  {
 
 set_consul_var() {
 
-  [[ -z "${CONSUL}" ]] || [[ -z "${CONFIG_BACKEND}"  ]] && return
+  [[ -z "${CONFIG_BACKEND_SERVER}" ]] || [[ -z "${CONFIG_BACKEND}"  ]] && return
 
   local consul_key=${1}
   local consul_var=${2}
@@ -62,22 +61,22 @@ set_consul_var() {
   data=$(curl \
     --request PUT \
     --silent \
-    ${CONSUL}:8500/v1/kv/${consul_key} \
+    ${CONFIG_BACKEND_SERVER}:8500/v1/kv/${consul_key} \
     --data ${consul_var})
 #  curl \
 #    --silent \
-#    ${CONSUL}:8500/v1/kv/${consul_key}
+#    ${CONFIG_BACKEND_SERVER}:8500/v1/kv/${consul_key}
 }
 
 get_consul_var() {
 
-  [[ -z "${CONSUL}" ]] || [[ -z "${CONFIG_BACKEND}"  ]] && return
+  [[ -z "${CONFIG_BACKEND_SERVER}" ]] || [[ -z "${CONFIG_BACKEND}"  ]] && return
 
   local consul_key=${1}
 
   data=$(curl \
     --silent \
-    ${CONSUL}:8500/v1/kv/${consul_key})
+    ${CONFIG_BACKEND_SERVER}:8500/v1/kv/${consul_key})
 
   if [[ ! -z "${data}" ]]
   then

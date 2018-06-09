@@ -1,0 +1,35 @@
+---
+version: '3.3'
+
+volumes:
+  consul:
+    driver: local
+
+services:
+
+  etcd:
+    image: bodsch/docker-etcd
+    container_name: etcd
+    hostname: etcd
+    ports:
+      - 2379:2379
+      - 2380:2380
+    volumes:
+      - ./data:/data
+
+  database:
+    #image: bodsch/docker-mysql:10.1.28-r1
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - BUILD_DATE=${BUILD_DATE}
+    container_name: database
+    hostname: database
+    environment:
+#      - MYSQL_SYSTEM_USER=root
+#      - MYSQL_ROOT_PASS=vYUQ14SGVrJRi69PsujC
+      - CONFIG_BACKEND=etcd
+      - CONFIG_BACKEND_SERVER=consul-master
+    links:
+      - etcd
