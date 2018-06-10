@@ -103,6 +103,7 @@ run() {
     if [[ ! -z "${CONFIG_BACKEND_SERVER}" ]] && [[ ! -z "${CONFIG_BACKEND}" ]]
     then
       save_config
+      register_node
     fi
 
     log_info "start instance"

@@ -8,12 +8,14 @@ volumes:
 services:
 
   etcd:
-    image: bodsch/docker-etcd
+    restart: always
+    image: bodsch/docker-etcd:3.3.7
     container_name: etcd
     hostname: etcd
     ports:
       - 2379:2379
       - 2380:2380
+    command: "--data-dir /data --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://0.0.0.0:2380"
     volumes:
       - ./data:/data
 
@@ -27,9 +29,10 @@ services:
     container_name: database
     hostname: database
     environment:
+      - DEBUG=true
 #      - MYSQL_SYSTEM_USER=root
 #      - MYSQL_ROOT_PASS=vYUQ14SGVrJRi69PsujC
       - CONFIG_BACKEND=etcd
-      - CONFIG_BACKEND_SERVER=consul-master
+      - CONFIG_BACKEND_SERVER=etcd
     links:
       - etcd

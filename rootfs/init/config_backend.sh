@@ -1,4 +1,5 @@
 
+CONFIG_BACKEND_TYPE='DBA'
 
 if [[ ! -z "${CONFIG_BACKEND_SERVER}" ]]
 then
@@ -12,29 +13,16 @@ then
 
   if [[ "${CONFIG_BACKEND}" = "consul" ]]
   then
-    . config_backend/consul.sh
+    . /init/config_backend/consul.sh
   elif [[ "${CONFIG_BACKEND}" = "etcd" ]]
   then
-    . config_backend/etc.sh
+    . /init/config_backend/etcd.sh
   fi
 fi
 
 save_config() {
 
-  local backend=
-
-  if [[ "${CONFIG_BACKEND}" = "consul" ]]
-  then
-    # wait_for_consul
-    register_node
-    set_consul_var  "${HOSTNAME}/root/user" ${MYSQL_SYSTEM_USER}
-    set_consul_var  "${HOSTNAME}/root/password" ${MYSQL_ROOT_PASS}
-    set_consul_var  "${HOSTNAME}/url" ${HOSTNAME}
-  elif [[ "${CONFIG_BACKEND}" = "etcd" ]]
-  then
-    set_etc_var "" ""
-
-
-  fi
-
+  set_var  "root_user" "${MYSQL_SYSTEM_USER}"
+  set_var  "root_password" "${MYSQL_ROOT_PASS}"
+  set_var  "url" ${HOSTNAME}
 }

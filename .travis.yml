@@ -11,7 +11,6 @@ jobs:
   include:
     - stage: build
       script:
-        - .travis/export_environment.sh
         - make build
         - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
         - make release

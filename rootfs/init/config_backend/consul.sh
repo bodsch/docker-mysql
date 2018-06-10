@@ -1,6 +1,6 @@
 #!/bin/sh
 
-wait_for_consul() {
+wait_for_config_backend() {
 
   [[ -z "${CONFIG_BACKEND_SERVER}" ]] || [[ -z "${CONFIG_BACKEND}"  ]] && return
 
@@ -51,7 +51,7 @@ register_node()  {
   echo "${data}"
 }
 
-set_consul_var() {
+set_var() {
 
   [[ -z "${CONFIG_BACKEND_SERVER}" ]] || [[ -z "${CONFIG_BACKEND}"  ]] && return
 
@@ -61,14 +61,15 @@ set_consul_var() {
   data=$(curl \
     --request PUT \
     --silent \
-    ${CONFIG_BACKEND_SERVER}:8500/v1/kv/${consul_key} \
+    ${CONFIG_BACKEND_SERVER}:8500/v1/kv/${CONFIG_BACKEND_TYPE}/${HOSTNAME}/${consul_key} \
     --data ${consul_var})
+
 #  curl \
 #    --silent \
 #    ${CONFIG_BACKEND_SERVER}:8500/v1/kv/${consul_key}
 }
 
-get_consul_var() {
+get_var() {
 
   [[ -z "${CONFIG_BACKEND_SERVER}" ]] || [[ -z "${CONFIG_BACKEND}"  ]] && return
 
@@ -76,7 +77,7 @@ get_consul_var() {
 
   data=$(curl \
     --silent \
-    ${CONFIG_BACKEND_SERVER}:8500/v1/kv/${consul_key})
+    ${CONFIG_BACKEND_SERVER}:8500/v1/kv/${CONFIG_BACKEND_TYPE}/${HOSTNAME}/${consul_key})
 
   if [[ ! -z "${data}" ]]
   then

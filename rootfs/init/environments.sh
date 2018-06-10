@@ -16,13 +16,17 @@ MYSQL_ROOT_PASS=${MYSQL_ROOT_PASS:-$(pwgen -s 25 1)}
 MYSQL_OPTS="--batch --skip-column-names "
 MYSQL_BIN=$(which mysql)
 
-wait_for_consul
+wait_for_config_backend
 
-PASSWORD=$(get_consul_var "${HOSTNAME}/root/password")
+PASSWORD=$(get_var "root_password")
 
-#log_info "generated password  :  '${MYSQL_ROOT_PASS}'"
-#log_info "restored from consul:  '${PASSWORD}'"
+echo ""
+
+log_info "generated password          :  '${MYSQL_ROOT_PASS}'"
+log_info "restored from config backend: '${PASSWORD}'"
 
 [[ -z "${PASSWORD}" ]] || MYSQL_ROOT_PASS=${PASSWORD}
 
-#log_info "set MYSQL_ROOT_PASS to '${MYSQL_ROOT_PASS}'"
+#exit 0
+
+log_info "set MYSQL_ROOT_PASS to '${MYSQL_ROOT_PASS}'"
