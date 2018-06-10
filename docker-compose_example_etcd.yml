@@ -2,7 +2,7 @@
 version: '3.3'
 
 volumes:
-  consul:
+  etcd:
     driver: local
 
 services:
@@ -17,7 +17,7 @@ services:
       - 2380:2380
     command: "--data-dir /data --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://0.0.0.0:2380"
     volumes:
-      - ./data:/data
+      - etcd:/data
 
   database:
     #image: bodsch/docker-mysql:10.1.28-r1
