@@ -16,9 +16,12 @@ MYSQL_ROOT_PASS=${MYSQL_ROOT_PASS:-$(pwgen -s 25 1)}
 MYSQL_OPTS="--batch --skip-column-names "
 MYSQL_BIN=$(which mysql)
 
-wait_for_config_backend
+if [[ ! -z "${CONFIG_BACKEND_SERVER}" ]] && [[ ! -z "${CONFIG_BACKEND}" ]]
+then
+  wait_for_config_backend
 
-PASSWORD=$(get_var "root_password")
+  PASSWORD=$(get_var "root_password")
+fi
 
 echo ""
 

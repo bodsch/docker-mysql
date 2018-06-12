@@ -37,14 +37,14 @@ create_directory_structure() {
   data=$(curl \
       --silent \
       --request PUT \
-      http://${CONFIG_BACKEND_SERVER}:2379/v2/keys/${CONFIG_BACKEND_TYPE} \
+      http://${CONFIG_BACKEND_SERVER}:2379/v2/keys \
       --data 'dir=true')
 
   # as last, create a directory for ${HOSTNAME} related entries
   data=$(curl \
       --silent \
       --request PUT \
-      http://${CONFIG_BACKEND_SERVER}:2379/v2/keys/${CONFIG_BACKEND_TYPE}/${HOSTNAME} \
+      http://${CONFIG_BACKEND_SERVER}:2379/v2/keys/${HOSTNAME} \
       --data 'dir=true')
 }
 
@@ -65,7 +65,26 @@ register_node()  {
       --silent \
       --request PUT \
       http://${CONFIG_BACKEND_SERVER}:2379/v2/keys/services/${HOSTNAME} \
-      --data 'value=present')
+      --data 'dir=true')
+
+  # register service
+  data=$(curl \
+      --silent \
+      --request PUT \
+      http://${CONFIG_BACKEND_SERVER}:2379/v2/keys/services/${HOSTNAME}/fqdn \
+      --data "value=$(hostname -f)")
+
+  data=$(curl \
+      --silent \
+      --request PUT \
+      http://${CONFIG_BACKEND_SERVER}:2379/v2/keys/services/${HOSTNAME}/name \
+      --data "value=$(hostname -s)")
+
+  data=$(curl \
+      --silent \
+      --request PUT \
+      http://${CONFIG_BACKEND_SERVER}:2379/v2/keys/services/${HOSTNAME}/ip \
+      --data "value=$(hostname -i)")
 }
 
 set_var() {
@@ -76,7 +95,7 @@ set_var() {
   data=$(curl \
     --request PUT \
     --silent \
-    ${CONFIG_BACKEND_SERVER}:2379/v2/keys/${CONFIG_BACKEND_TYPE}/${HOSTNAME}/${key} \
+    ${CONFIG_BACKEND_SERVER}:2379/v2/keys/${HOSTNAME}/${key} \
     --data "value=${var}")
 }
 
@@ -88,7 +107,7 @@ get_var() {
 
   local data=$(curl \
     --silent \
-    ${CONFIG_BACKEND_SERVER}:2379/v2/keys/${CONFIG_BACKEND_TYPE}/${HOSTNAME}/${key})
+    ${CONFIG_BACKEND_SERVER}:2379/v2/keys/${HOSTNAME}/${key})
 
   error_code=$(echo -e "${data}" | jq --raw-output .errorCode)
 
