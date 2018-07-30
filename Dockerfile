@@ -1,15 +1,15 @@
 
-FROM alpine:3.7
+FROM alpine:3.8
 
 ENV \
   TERM=xterm \
-  BUILD_DATE="2018-05-04" \
-  VERSION="10.1.32"
+  BUILD_DATE="2018-07-30" \
+  VERSION="10.2.15"
 
 EXPOSE 3306
 
 LABEL \
-  version="1801" \
+  version="1807" \
   maintainer="Bodo Schulz <bodo@boone-schulz.de>" \
   org.label-schema.build-date=${BUILD_DATE} \
   org.label-schema.name="MariaDB Docker Image" \
