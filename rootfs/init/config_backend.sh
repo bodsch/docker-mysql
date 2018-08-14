@@ -1,6 +1,4 @@
 
-CONFIG_BACKEND_TYPE='DBA'
-
 if [[ ! -z "${CONFIG_BACKEND_SERVER}" ]]
 then
   if [[ -z "${CONFIG_BACKEND}" ]]

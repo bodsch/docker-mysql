@@ -61,7 +61,7 @@ set_var() {
   data=$(curl \
     --request PUT \
     --silent \
-    ${CONFIG_BACKEND_SERVER}:8500/v1/kv/${CONFIG_BACKEND_TYPE}/${HOSTNAME}/${consul_key} \
+    ${CONFIG_BACKEND_SERVER}:8500/v1/kv/${HOSTNAME}/${consul_key} \
     --data ${consul_var})
 
 #  curl \
@@ -77,7 +77,7 @@ get_var() {
 
   data=$(curl \
     --silent \
-    ${CONFIG_BACKEND_SERVER}:8500/v1/kv/${CONFIG_BACKEND_TYPE}/${HOSTNAME}/${consul_key})
+    ${CONFIG_BACKEND_SERVER}:8500/v1/kv/${HOSTNAME}/${consul_key})
 
   if [[ ! -z "${data}" ]]
   then
