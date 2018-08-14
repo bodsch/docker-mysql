@@ -19,7 +19,11 @@ jobs:
       script:
         - make
         - make compose-file
+        - docker-compose build
+        - docker-compose up -d
         - tests/test.sh
+        - docker-compose kill
+        - docker-compose down
 
     - stage: push latest docker image
       script:
