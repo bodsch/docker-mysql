@@ -34,6 +34,7 @@ jobs:
         - docker logout
 
     - stage: push version docker image
+      script:
         - make
         - docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}"
         - docker push ${DOCKER_USERNAME}/docker-mysql:${VERSION}
