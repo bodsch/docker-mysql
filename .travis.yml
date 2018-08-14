@@ -27,7 +27,6 @@ jobs:
 
     - stage: push latest docker image
       script:
-        - .travis/export_environment.sh
         - make
         - docker tag ${DOCKER_USERNAME}/docker-mysql:${VERSION} ${DOCKER_USERNAME}/docker-mysql:latest
         - docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}"
@@ -35,8 +34,7 @@ jobs:
         - docker logout
 
     - stage: push version docker image
-        - .travis/export_environment.sh
         - make
-        - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
-        - make release
+        - docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}"
+        - docker push ${DOCKER_USERNAME}/docker-mysql:${VERSION}
         - docker logout
