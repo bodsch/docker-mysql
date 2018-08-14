@@ -7,6 +7,7 @@ env:
   global:
     - BUILD_DATE=$(date +%Y-%m-%d)
     - BUILD_VERSION=$(date +%y%m)
+    - VERSION=$(.travis/export_environment.sh)
 
 jobs:
   include:
