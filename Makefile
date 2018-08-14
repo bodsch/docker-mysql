@@ -7,8 +7,8 @@ REPO = docker-mysql
 NAME = mysql
 INSTANCE = default
 
-BUILD_DATE := $(shell date +%Y-%m-%d)
-BUILD_VERSION := $(shell date +%y%m)
+BUILD_DATE      := $(shell date +%Y-%m-%d)
+BUILD_VERSION   := $(shell date +%y%m)
 MARIADB_VERSION ?= $(shell .travis/export_environment.sh)
 
 .PHONY: build push shell run start stop rm release
@@ -85,6 +85,15 @@ stop:
 rm:
 	docker rm \
 		$(NAME)-$(INSTANCE)
+
+compose-file:
+	echo "BUILD_DATE=$(BUILD_DATE)" > .env
+	echo "BUILD_VERSION=$(BUILD_VERSION)" >> .env
+	echo "MYSQL_SYSTEM_USER=root" >> .env
+	echo "MYSQL_ROOT_PASS=vYUQ14SGVrJRi69PsujC" >> .env
+	docker-compose \
+		--file docker-compose_example.yml \
+		config > docker-compose.yml
 
 release:
 	make push -e VERSION=${MARIADB_VERSION}

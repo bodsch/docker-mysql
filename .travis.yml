@@ -3,16 +3,36 @@ sudo: required
 services:
   - docker
 
-install:
-  - docker build --tag bodsch/docker-mysql .
-  - docker run --detach --name mysql bodsch/docker-mysql
+env:
+  global:
+    - BUILD_DATE=$(date +%Y-%m-%d)
+    - BUILD_VERSION=$(date +%y%m)
 
 jobs:
   include:
     - stage: build
       script:
         - .travis/export_environment.sh
-        - make build
+        - make
+
+    - stage: test
+        - .travis/export_environment.sh
+        - make
+        - make compose-file
+        - tests/test.sh
+
+    - stage: push latest docker image
+      script:
+        - .travis/export_environment.sh
+        - make
+        - docker tag ${DOCKER_USERNAME}/docker-mysql:${MARIADB_VERSION} ${DOCKER_USERNAME}/docker-mysql:latest
+        - docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}"
+        - docker push ${DOCKER_USERNAME}/docker-mysql:latest
+        - docker logout
+
+    - stage: push version docker image
+        - .travis/export_environment.sh
+        - make
         - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
         - make release
         - docker logout
